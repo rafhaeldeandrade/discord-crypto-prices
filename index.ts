@@ -1,4 +1,6 @@
 import { Client, Guild, Intents } from "discord.js";
+import axios from "axios";
+
 require("dotenv").config();
 
 const MIN_REFRESH = process.env.MIN_TIME_REFRESH || 10000;
@@ -44,16 +46,6 @@ const mapCoinsToChannelId: {
 
 const BINANCE_API_URL = "https://api.binance.com/api/v3/avgPrice?symbol=";
 
-async function fetchCoinPrices() {
-  for (const coin in mapCoinsToChannelId) {
-    const response = await fetch(`${BINANCE_API_URL}${coin}`);
-    const json = await response.json();
-    const price = json.price;
-
-    mapCoinsToChannelId[coin].lastPrice = price;
-  }
-}
-
 client.login(process.env.DISCORD_APPLICATION_TOKEN);
 
 client.on("ready", () => {
@@ -61,9 +53,8 @@ client.on("ready", () => {
 
   async function fetchCoinPrices() {
     for (const coin in mapCoinsToChannelId) {
-      const response = await fetch(`${BINANCE_API_URL}${coin}`);
-      const json = await response.json();
-      const price = json.price;
+      const response = await axios.get(`${BINANCE_API_URL}${coin}`);
+      const { price } = response.data;
 
       mapCoinsToChannelId[coin].lastPrice = price;
       let channel = guild.channels.cache.get(
@@ -73,5 +64,8 @@ client.on("ready", () => {
     }
   }
 
-  setTimeout(fetchCoinPrices, randomIntFromInterval(MIN_REFRESH, MAX_REFRESH));
+  setTimeout(
+    async () => await fetchCoinPrices(),
+    randomIntFromInterval(MIN_REFRESH, MAX_REFRESH)
+  );
 });
