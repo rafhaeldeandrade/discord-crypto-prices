@@ -1,7 +1,6 @@
 FROM node:gallium-alpine3.14
 WORKDIR /app
-COPY package.json .
-COPY index.ts .
+COPY ["package.json", "index.ts", "tsconfig.json", ".env", "./"]
 RUN npm install
-RUN npm tsc --build
+RUN npx tsc --build
 CMD ["node", "index.js"]
