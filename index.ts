@@ -16,30 +16,36 @@ function randomIntFromInterval(min: string | number, max: string | number) {
 }
 
 const mapCoinsToChannelId: {
-  [key: string]: { channelId: string; lastPrice: string };
+  [key: string]: { channelId: string; channelSlug: string; lastPrice: string };
 } = {
   USDTBRL: {
     channelId: "886369502919557170",
+    channelSlug: "USDT/BRL: ",
     lastPrice: "",
   },
   SLPUSDT: {
     channelId: "886331101226872883",
+    channelSlug: "SLP/USDT: ",
     lastPrice: "",
   },
   ETHUSDT: {
     channelId: "886330810649673728",
+    channelSlug: "ETH/USDT: ",
     lastPrice: "",
   },
   SOLUSDT: {
     channelId: "886275084845711371",
+    channelSlug: "SOL/USDT: ",
     lastPrice: "",
   },
   BTCUSDT: {
     channelId: "886330851946795048",
+    channelSlug: "BTC/USDT: ",
     lastPrice: "",
   },
   MINAUSDT: {
     channelId: "886390689150152745",
+    channelSlug: "MINA/USDT: ",
     lastPrice: "",
   },
 };
@@ -57,10 +63,14 @@ client.on("ready", () => {
       const { price } = response.data;
 
       mapCoinsToChannelId[coin].lastPrice = price;
+
       let channel = guild.channels.cache.get(
         mapCoinsToChannelId[coin].channelId
       );
-      channel?.setName(price);
+      const channelSlug = mapCoinsToChannelId[coin].channelSlug;
+      const channelPrice = Number(price).toFixed(3);
+
+      channel?.setName(`${channelSlug}${channelPrice}`);
     }
   }
 
