@@ -3,8 +3,8 @@ import axios from "axios";
 
 require("dotenv").config();
 
-const MIN_REFRESH = process.env.MIN_TIME_REFRESH || 10000;
-const MAX_REFRESH = process.env.MAX_TIME_REFRESH || 15000;
+const MIN_REFRESH = process.env.MIN_TIME_REFRESH || 300000;
+const MAX_REFRESH = process.env.MAX_TIME_REFRESH || 360000;
 const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
