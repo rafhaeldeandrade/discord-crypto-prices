@@ -57,8 +57,6 @@ client.on("ready", () => {
 
     response.data.forEach(
       ({ symbol, price }: { symbol: string; price: string }) => {
-        console.log("symbol", symbol);
-        console.log("price", price);
         let channel = guild.channels.cache.get(
           mapCoinsToChannelId[symbol].channelId
         );
@@ -71,8 +69,7 @@ client.on("ready", () => {
     );
   }
 
-  setTimeout(
-    async () => await fetchCoinPrices(),
-    randomIntFromInterval(MIN_REFRESH, MAX_REFRESH)
-  );
+  setTimeout(async () => {
+    await fetchCoinPrices();
+  }, randomIntFromInterval(MIN_REFRESH, MAX_REFRESH));
 });
