@@ -57,6 +57,8 @@ client.on("ready", () => {
 
     response.data.forEach(
       ({ symbol, price }: { symbol: string; price: string }) => {
+        console.log("symbol", symbol);
+        console.log("price", price);
         let channel = guild.channels.cache.get(
           mapCoinsToChannelId[symbol].channelId
         );
