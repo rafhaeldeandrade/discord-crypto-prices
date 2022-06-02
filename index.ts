@@ -16,62 +16,57 @@ function randomIntFromInterval(min: string | number, max: string | number) {
 }
 
 const mapCoinsToChannelId: {
-  [key: string]: { channelId: string; channelSlug: string; lastPrice: string };
+  [key: string]: { channelId: string; channelSlug: string };
 } = {
   USDTBRL: {
     channelId: "886369502919557170",
     channelSlug: "USDT/BRL: ",
-    lastPrice: "",
   },
   SLPUSDT: {
     channelId: "886331101226872883",
     channelSlug: "SLP/USDT: ",
-    lastPrice: "",
   },
   ETHUSDT: {
     channelId: "886330810649673728",
     channelSlug: "ETH/USDT: ",
-    lastPrice: "",
   },
   SOLUSDT: {
     channelId: "886275084845711371",
     channelSlug: "SOL/USDT: ",
-    lastPrice: "",
   },
   BTCUSDT: {
     channelId: "886330851946795048",
     channelSlug: "BTC/USDT: ",
-    lastPrice: "",
   },
   MINAUSDT: {
     channelId: "886390689150152745",
     channelSlug: "MINA/USDT: ",
-    lastPrice: "",
   },
 };
-
-const BINANCE_API_URL = "https://api.binance.com/api/v3/avgPrice?symbol=";
 
 client.login(process.env.DISCORD_APPLICATION_TOKEN);
 
 client.on("ready", () => {
+  const BINANCE_API_URL =
+    "https://api.binance.com/api/v3/ticker/price?symbols=";
+  const symbolsArray = JSON.stringify(Object.keys(mapCoinsToChannelId));
   let guild: Guild = client.guilds.cache.get(DISCORD_GUILD_ID as string)!;
 
   async function fetchCoinPrices() {
-    for (const coin in mapCoinsToChannelId) {
-      const response = await axios.get(`${BINANCE_API_URL}${coin}`);
-      const { price } = response.data;
+    const response = await axios.get(`${BINANCE_API_URL}${symbolsArray}`);
 
-      mapCoinsToChannelId[coin].lastPrice = price;
+    response.data.forEach(
+      ({ symbol, price }: { symbol: string; price: string }) => {
+        let channel = guild.channels.cache.get(
+          mapCoinsToChannelId[symbol].channelId
+        );
 
-      let channel = guild.channels.cache.get(
-        mapCoinsToChannelId[coin].channelId
-      );
-      const channelSlug = mapCoinsToChannelId[coin].channelSlug;
-      const channelPrice = Number(price).toFixed(3);
+        const channelSlug = mapCoinsToChannelId[symbol].channelSlug;
+        const channelPrice = Number(price).toFixed(3);
 
-      channel?.setName(`${channelSlug}${channelPrice}`);
-    }
+        channel?.setName(`${channelSlug}${channelPrice}`);
+      }
+    );
   }
 
   setTimeout(
