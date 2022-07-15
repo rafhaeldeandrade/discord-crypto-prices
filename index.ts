@@ -10,9 +10,9 @@ const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 function randomIntFromInterval(min: string | number, max: string | number) {
-  return Math.floor(
-    Math.random() * (Number(max) - Number(min) + 1) + Number(min)
-  );
+  const _min = Math.ceil(Number(min));
+  const _max = Math.floor(Number(max));
+  return Math.floor(Math.random() * (_max - _min + 1)) + _min;
 }
 
 const mapCoinsToChannelId: {
@@ -45,6 +45,11 @@ const mapCoinsToChannelId: {
 };
 
 client.login(process.env.DISCORD_APPLICATION_TOKEN);
+
+client.on("rateLimit", (data) => {
+  console.error("Rate limit hit");
+  console.log(data);
+});
 
 client.on("ready", () => {
   const BINANCE_API_URL =
