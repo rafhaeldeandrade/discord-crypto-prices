@@ -74,7 +74,7 @@ client.on("ready", () => {
     );
   }
 
-  setTimeout(async () => {
+  setInterval(async () => {
     await fetchCoinPrices();
   }, randomIntFromInterval(MIN_REFRESH, MAX_REFRESH));
 });
